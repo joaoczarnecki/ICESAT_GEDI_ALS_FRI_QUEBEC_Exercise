@@ -47,6 +47,7 @@ exercise finds the plots where a satellite sample *does* fall on top of the plot
 | [6. Why? The same ground](06_why_on_the_same_ground.html) | In one region, ALS cut to each footprint: satellite error vs different ground | `09`, `10`, `11` | 1 min (tables provided) or ~5 h |
 | [7. Delay, disturbance and season](07_delay_and_season.html) | The cost of the delay, forest type, leaf-off ALS | `08` | – |
 | [8. Lessons and limits](08_lessons.html) | What to remember before using these data | – | – |
+| [9. Complete code](09_complete_code.html) | The knitted exercise: every script, run step by step, with its output | all | – |
 
 **Fast track.** The repository includes the two expensive products: the plot ALS metrics and the MRNF disturbance records. You can
 start at step 3 with only Python, R and an internet connection, and have every figure in about 3 hours.
