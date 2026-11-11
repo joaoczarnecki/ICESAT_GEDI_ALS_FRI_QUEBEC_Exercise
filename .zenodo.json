@@ -1,0 +1,23 @@
+{
+  "title": "ICESat-2 and GEDI against airborne lidar at Québec's permanent forest plots: a reproducible exercise",
+  "upload_type": "software",
+  "description": "<p>A reproducible, step-by-step exercise comparing spaceborne lidar canopy heights (ICESat-2 ATL08 and GEDI L2A, obtained through SlideRule Earth) with airborne lidar (ALS) at about 10,000 permanent sample plots (PEP) of Québec.</p><p>It covers the masked download of satellite samples near the plots, pairing with MRNF forest disturbance records, agreement at the plot and with distance, the cost of the delay between acquisitions, forest type and ALS season, and, in one region, a footprint-by-footprint comparison with ALS on the same ground.</p><p>Contents: R and Python scripts (steps 0–11), data checks, an R Markdown file with the complete code, the derived tables needed to run it without the heavy downloads, and the tutorial website.</p><p>Tutorial: <a href=\"https://joaoczarnecki.github.io/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise/\">https://joaoczarnecki.github.io/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise/</a></p>",
+  "creators": [
+    {
+      "name": "Czarnecki de Liz, João Paulo",
+      "affiliation": "Université Laval",
+      "orcid": "0000-0003-1860-346X"
+    }
+  ],
+  "license": "MIT",
+  "keywords": ["ICESat-2", "ATL08", "GEDI", "airborne lidar", "canopy height", "forest inventory", "permanent sample plots", "Québec", "SlideRule", "tutorial", "reproducible research"],
+  "notes": "Code: MIT licence. Text, figures and derived data: CC BY 4.0 (see LICENSE-docs.md). Source data: Ministère des Ressources naturelles et des Forêts du Québec (PEP plots, airborne lidar, disturbance maps; CC BY 4.0); NASA ICESat-2 ATL08 and GEDI L2A via SlideRule Earth. Developed with Claude (Anthropic) as an AI coding assistant.",
+  "related_identifiers": [
+    {
+      "identifier": "https://joaoczarnecki.github.io/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise/",
+      "relation": "isDocumentedBy",
+      "resource_type": "publication-other"
+    }
+  ],
+  "language": "eng"
+}

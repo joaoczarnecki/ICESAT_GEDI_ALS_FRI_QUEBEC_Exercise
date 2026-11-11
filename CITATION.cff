@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this exercise, its code or its data, please cite it as below."
+type: software
+title: "ICESat-2 and GEDI against airborne lidar at Québec's permanent forest plots: a reproducible exercise"
+version: 1.0.0
+date-released: 2026-11-11
+authors:
+  - family-names: Czarnecki de Liz
+    given-names: João Paulo
+    affiliation: Université Laval
+    orcid: "https://orcid.org/0000-0003-1860-346X"
+license: MIT
+repository-code: "https://github.com/joaoczarnecki/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise"
+url: "https://joaoczarnecki.github.io/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise/"
+abstract: >-
+  A reproducible, step-by-step exercise comparing spaceborne lidar canopy heights (ICESat-2 ATL08 and GEDI L2A,
+  obtained through SlideRule Earth) with airborne lidar (ALS) at about 10,000 permanent sample plots of Québec.
+  It covers the masked download of satellite samples near the plots, pairing with forest disturbance records,
+  agreement at the plot and with distance, the cost of the delay between acquisitions, forest type and ALS season,
+  and, in one region, a footprint-by-footprint comparison with ALS on the same ground. Code in R and Python (MIT),
+  text and figures CC BY 4.0. Developed with Claude (Anthropic) as an AI coding assistant.
+keywords:
+  - ICESat-2
+  - ATL08
+  - GEDI
+  - airborne lidar
+  - canopy height
+  - forest inventory
+  - permanent sample plots
+  - Québec
+  - SlideRule
+  - tutorial
+  - reproducible research
