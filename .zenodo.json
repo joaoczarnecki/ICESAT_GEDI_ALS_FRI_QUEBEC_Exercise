@@ -9,6 +9,13 @@
       "orcid": "0000-0003-1860-346X"
     }
   ],
+  "contributors": [
+    {
+      "name": "Achim, Alexis",
+      "affiliation": "Université Laval",
+      "type": "Supervisor"
+    }
+  ],
   "license": "MIT",
   "keywords": ["ICESat-2", "ATL08", "GEDI", "airborne lidar", "canopy height", "forest inventory", "permanent sample plots", "Québec", "SlideRule", "tutorial", "reproducible research"],
   "notes": "Code: MIT licence. Text, figures and derived data: CC BY 4.0 (see LICENSE-docs.md). Source data: Ministère des Ressources naturelles et des Forêts du Québec (PEP plots, airborne lidar, disturbance maps; CC BY 4.0); NASA ICESat-2 ATL08 and GEDI L2A via SlideRule Earth. Developed with Claude (Anthropic) as an AI coding assistant.",
