@@ -80,7 +80,7 @@ flowchart LR
 
 ## How to cite
 
-Czarnecki de Liz, J. P. (2026). *ICESat-2 and GEDI against airborne lidar at Québec's permanent forest plots: a
+Czarnecki de Liz, J. P., & Achim, A. (2026). *ICESat-2 and GEDI against airborne lidar at Québec's permanent forest plots: a
 reproducible exercise* (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.24139153
 
 This DOI always resolves to the latest version; each version also has its own DOI on the
@@ -89,7 +89,8 @@ citation in APA and BibTeX.
 
 ## Credits
 
-Exercise and code by **João Paulo Czarnecki de Liz** (Université Laval), developed with **Claude** (Anthropic) as a
+Exercise and code by **João Paulo Czarnecki de Liz** (Université Laval), under the supervision of **Alexis Achim**
+(Université Laval), developed with **Claude** (Anthropic) as a
 coding assistant. Text and figures: CC BY 4.0; code: MIT.
 
 Data:
