@@ -1,0 +1,21 @@
+# Large public inputs: download them as described in docs/01_setup_and_data.md
+data/raw/
+# Everything the scripts regenerate (cached downloads, checkpoints, intermediate tables)
+data/derived/
+outputs/
+*_cache/
+# A knitted copy of the exercise at the root (the published one is docs/exercise.html)
+/exercise.html
+/exercise_files/
+# R / Python / OS clutter
+.Rhistory
+.RData
+.Rproj.user/
+__pycache__/
+*.pyc
+.venv*/
+.DS_Store
+Thumbs.db
+# Jekyll build output when the site is served locally
+docs/_site/
+docs/.jekyll-cache/

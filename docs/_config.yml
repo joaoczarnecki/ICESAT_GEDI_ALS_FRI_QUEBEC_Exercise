@@ -1,0 +1,28 @@
+title: ICESat-2 and GEDI vs airborne lidar
+description: >-
+  A reproducible exercise: how close are ICESat-2 and GEDI canopy heights to airborne lidar at 10,000 permanent
+  forest plots of Québec, and how much does the delay between acquisitions cost?
+remote_theme: just-the-docs/just-the-docs@v0.10.0
+plugins:
+  - jekyll-remote-theme
+baseurl: "/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise"
+url: "https://joaoczarnecki.github.io"
+
+color_scheme: light
+mermaid:
+  version: "10.9.0"
+search_enabled: true
+heading_anchors: true
+back_to_top: true
+back_to_top_text: "Back to top"
+nav_external_links:
+  - title: Code on GitHub
+    url: https://github.com/joaoczarnecki/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise
+aux_links:
+  "GitHub repository":
+    - "https://github.com/joaoczarnecki/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise"
+footer_content: >-
+  João Paulo Czarnecki de Liz, with Claude (Anthropic) as coding assistant. Text and figures CC BY 4.0, code MIT.
+  Data: MRNF Québec (CC BY 4.0), NASA ICESat-2 and GEDI via SlideRule Earth.
+exclude:
+  - "*.Rmd"

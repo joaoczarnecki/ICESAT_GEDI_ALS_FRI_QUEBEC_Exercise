@@ -1,0 +1,293 @@
+---
+title: "ICESat-2 and GEDI against airborne lidar at Québec's permanent forest plots"
+subtitle: "The whole exercise, step by step, with the complete code"
+author: "João Paulo Czarnecki de Liz (developer), with Claude (Anthropic) as coding assistant"
+date: "`r format(Sys.Date())`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: false
+    df_print: kable
+    code_folding: show
+    code_download: true
+params:
+  python: ""             # path to the Python of the exercise; "" = .venv/Scripts/python.exe (Windows) or .venv/bin/python
+  install: false         # step 0: install the R packages
+  run_als: false         # steps 1-3: match plots to tiles, download ~700 GB of LAZ, extract plot metrics (days)
+  run_download: false    # step 5: download ICESat-2 and GEDI near the plots (2-3 h); false = use data/satellite/
+  run_events: false      # step 6: query the MRNF disturbance service (~1 h); false = use data/plot_mrnf_events.csv
+  run_why: false         # steps 9-10: region download, 306 LAZ tiles (23.5 GB), ALS at each footprint (~5 h); false = use data/why/
+  workers: 4             # parallel workers / requests
+---
+
+<!-- GENERATED-NOTICE -->
+
+```{r setup, include = FALSE}
+# Run this file from the repository root (open the folder as an RStudio project, or knit it from there).
+knitr::opts_knit$set(root.dir = normalizePath("."))
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, comment = "", fig.width = 9, fig.height = 5)
+suppressPackageStartupMessages({ library(data.table); library(ggplot2) })
+PY <- if (nzchar(params$python)) params$python else if (.Platform$OS.type == "windows") ".venv/Scripts/python.exe" else ".venv/bin/python"
+Sys.setenv(PY = PY, WORKERS = params$workers)
+# Python chunks ({py ...}) run with the exercise's Python, in isolated mode; the chunk option `args` passes the
+# command-line arguments of the script.
+knitr::knit_engines$set(py = function(options) {
+  out <- ""
+  if (isTRUE(options$eval)) {
+    f <- tempfile(fileext = ".py"); xfun::write_utf8(options$code, f); on.exit(unlink(f))
+    out <- system2(PY, c("-I", "-X", "utf8", shQuote(f), shQuote(as.character(options$args))), stdout = TRUE, stderr = TRUE)
+    st <- attr(out, "status")
+    out <- grep("Invalid \\\\escape|Failed to read metadata", out, value = TRUE, invert = TRUE)
+    if (!is.null(st) && st != 0) stop("Python chunk '", options$label, "' failed:\n", paste(tail(out, 20), collapse = "\n"))
+  }
+  options$engine <- "python"                     # syntax highlighting
+  knitr::engine_output(options, options$code, out)
+})
+theme_set(theme_minimal(base_size = 11))
+```
+
+This file runs the exercise of the
+[tutorial](https://joaoczarnecki.github.io/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise/) one step at a time. Every chunk
+holds the **complete code** of a script from `scripts/`; nothing is hidden behind `source()`. R chunks run in this
+R session. Python chunks (marked `py`) run with the exercise's Python. Each step shows what it produced and ends
+with `check_step()`, which tests the files before you go on.
+
+With the default parameters, the heavy steps use the tables provided in `data/` instead of rebuilding them:
+steps 1–3, 5, 6, 9 and 10. Knitting then takes a few minutes. Set the parameters in the header to `true` to rebuild
+them: *Knit → Knit with Parameters* in RStudio, or `rmarkdown::render("exercise.Rmd", params = list(run_download = TRUE))`.
+The only download needed with the defaults is the PEP GeoPackage, used for the forest types in step 7. See the
+[data page](https://joaoczarnecki.github.io/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise/01_setup_and_data.html).
+
+To run a chunk on its own in RStudio, run the `setup` chunk and the two helper chunks below first.
+
+# Helpers
+
+## Checks of each step (`scripts/check_data.R`)
+
+```{r helpers-checks}
+#@include scripts/check_data.R
+```
+
+## Reading and filtering the satellite tables (`scripts/summarise_lidar_by_polygon.R`)
+
+Used by steps 8 and 11.
+
+```{r helpers-lidar}
+#@include scripts/summarise_lidar_by_polygon.R
+```
+
+# Step 0. Software
+
+Python: `python -m venv .venv`, then `.venv/Scripts/python -m pip install -r requirements.txt`
+(`.venv/bin/python` on Linux and macOS). R packages:
+
+```{r step0-install, eval = params$install}
+#@include scripts/00_install_r_packages.R
+```
+
+```{r step0}
+check_step(0)
+```
+
+# Steps 1–3. ALS metrics of each plot
+
+## Step 1. Match the plots to the lidar tiles
+
+```{r step1, eval = params$run_als}
+#@include scripts/01_match_plots_to_tiles.R
+check_step(1)
+```
+
+## Step 2. Download the tiles
+
+```{r step2, eval = params$run_als}
+#@include scripts/02_download_laz.R
+check_step(2)
+```
+
+## Step 3. Plot metrics from the point clouds
+
+```{r step3, eval = params$run_als}
+#@include scripts/03_extract_plot_als_metrics.R
+```
+
+The table used from here on is your own extraction if it exists, otherwise `data/plot_als_metrics.csv`:
+
+```{r step3-look}
+check_step(3)
+als <- als_table()$d
+if ("status" %in% names(als)) als <- als[status == "ok"]
+als[, als_year := as.integer(substr(if ("DATES_ACQUISITION" %in% names(als)) DATES_ACQUISITION else "", 1, 4))]
+head(als[, .(plot_id, NOM_TUILE, DATES_ACQUISITION, pt_density_m2, zq50, zq95, zmax)])
+ggplot(als, aes(zq95)) + geom_histogram(binwidth = 1, fill = "grey40") +
+  labs(x = "Plot ALS P95 of all returns (m)", y = "Plots", title = sprintf("%s plots with ALS metrics", format(nrow(als), big.mark = ",")))
+ggplot(als, aes(factor(als_year))) + geom_bar(fill = "grey40") + labs(x = "ALS acquisition year", y = "Plots")
+```
+
+# Step 4. Plot buffers
+
+```{py step4}
+#@include scripts/04_make_plot_buffers.py
+```
+
+```{r step4-check}
+check_step(4)
+```
+
+# Step 5. ICESat-2 and GEDI within 150 m of the plots
+
+The download script works for any polygons. Its code is shown once here; the chunks after it run it for each
+product with the arguments given in their header (`args`).
+
+```{py get-spaceborne-lidar, eval = FALSE}
+#@include scripts/05_get_spaceborne_lidar.py
+```
+
+```{py step5-gedi, ref.label = "get-spaceborne-lidar", echo = FALSE, eval = params$run_download, args = c("data/derived/plot_buffers_150m.gpkg", "--id-field", "plot_id", "--product", "gedi02a", "--years", "2019-2025", "--months", "6-9", "--mask-cell-km", "100", "--workers", params$workers, "--out", "data/derived/gedi02a_plots.parquet")}
+```
+
+```{py step5-atl08, ref.label = "get-spaceborne-lidar", echo = FALSE, eval = params$run_download, args = c("data/derived/plot_buffers_150m.gpkg", "--id-field", "plot_id", "--product", "atl08", "--years", "2019-2025", "--months", "6-9", "--mask-cell-km", "100", "--workers", params$workers, "--out", "data/derived/atl08_plots.parquet")}
+```
+
+The two runs above use: `data/derived/plot_buffers_150m.gpkg --id-field plot_id --product gedi02a|atl08
+--years 2019-2025 --months 6-9 --mask-cell-km 100 --workers 4 --out data/derived/<product>_plots.parquet`.
+
+```{r step5-look}
+check_step(5)
+sat <- function(p) { f <- file.path("data/derived", paste0(p, "_plots.csv")); if (!file.exists(f)) f <- file.path("data/satellite", paste0(p, "_plots.csv")); fread(f) }
+g <- sat("gedi02a"); a <- sat("atl08")
+rbind(data.table(sensor = "GEDI L2A", year = as.integer(substr(g$time, 1, 4))),
+      data.table(sensor = "ICESat-2 ATL08", year = as.integer(substr(a$time_ns, 1, 4))))[, .N, by = .(sensor, year)] |>
+  dcast(year ~ sensor, value.var = "N")
+```
+
+# Step 6. Disturbance records under the plots
+
+```{py step6, eval = params$run_events}
+#@include scripts/06_query_mrnf_events.py
+```
+
+```{r step6-look}
+check_step(6)
+ev <- fread(if (file.exists("data/derived/plot_mrnf_events.csv")) "data/derived/plot_mrnf_events.csv" else "data/plot_mrnf_events.csv")
+ev[, year := fcoalesce(as.numeric(an_perturb), as.numeric(an_origine), as.numeric(exercice))]
+ev[year >= 2010 & overlap >= 0.5, .N, by = .(layer, period = cut(year, c(2009, 2014, 2019, 2026), labels = c("2010-2014", "2015-2019", "2020-2025")))] |>
+  dcast(layer ~ period, value.var = "N", fill = 0)
+```
+
+# Step 7. Plot table: forest type, domain, events since 2010
+
+```{py step7}
+#@include scripts/07_build_plot_table.py
+```
+
+```{r step7-look}
+check_step(7)
+pp <- fread("data/derived/plots_province.csv")
+pp[, als_season := fifelse(als_month %in% 6:9, "leaf-on ALS", "leaf-off / transition ALS")]
+dcast(pp[, .N, by = .(forest_type, als_season)], forest_type ~ als_season, value.var = "N")
+```
+
+# Step 8. Pairs, statistics and figures
+
+```{r step8}
+#@include scripts/08_compare_figures.R
+check_step(8)
+```
+
+```{r step8-figures, echo = FALSE, out.width = "100%"}
+knitr::include_graphics(file.path("docs/assets/img", c("P1_plots_with_samples.png", "P2_agreement_at_the_plot.png",
+                                                        "P3_delay_uncertainty.png", "P4_forest_type_and_als_season.png")))
+```
+
+Every number quoted in pages 5 and 7 of the tutorial:
+
+```{r step8-numbers}
+cat(readLines("outputs/numbers.txt"), sep = "\n")
+```
+
+# Steps 9–11. Why? The same ground, footprint by footprint
+
+In one region (UPE 14–15, `data/study_area/`), the ALS is cut to the exact ground of each satellite sample. Page 6
+of the tutorial explains the results. With `run_why = false`, steps 9 and 10 are skipped and step 11 uses the
+tables provided in `data/why/`. With `run_why = true`, step 2 needs `data/derived/plot_tiles.csv` from step 1
+for the tile URLs.
+
+## Step 9. Satellite samples inside the region's ALS tiles
+
+The tiles that hold the region's plots:
+
+```{py step9-tiles, ref.label = "step9", echo = FALSE, eval = params$run_why, args = "--tiles-only"}
+```
+
+All the satellite samples of the region (not only near the plots: every sample inside a tile counts):
+
+```{py step9-gedi, ref.label = "get-spaceborne-lidar", echo = FALSE, eval = params$run_why, args = c("data/study_area/upe1415_study_area.shp", "--product", "gedi02a", "--years", "2019-2025", "--months", "6-9", "--out", "data/derived/why/gedi02a.parquet")}
+```
+
+```{py step9-atl08, ref.label = "get-spaceborne-lidar", echo = FALSE, eval = params$run_why, args = c("data/study_area/upe1415_study_area.shp", "--product", "atl08", "--years", "2019-2025", "--months", "6-9", "--out", "data/derived/why/atl08.parquet")}
+```
+
+The 306 LAZ tiles, with the code of step 2 restricted to the list:
+
+```{r step9-laz-list, eval = params$run_why}
+Sys.setenv(TILE_LIST = "data/derived/why/tiles_needed.csv")
+```
+
+```{r step9-laz, ref.label = "step2", echo = FALSE, eval = params$run_why}
+```
+
+```{r step9-laz-done, eval = params$run_why}
+Sys.unsetenv("TILE_LIST")
+```
+
+Then the samples inside the tiles, their nearest plot and the MRNF events after the flight (the chunks above ran
+it first with `--tiles-only`):
+
+```{py step9, eval = params$run_why}
+#@include scripts/09_footprint_inputs.py
+```
+
+```{r step9-check}
+check_step(9)
+```
+
+## Step 10. ALS on the ground of each footprint
+
+```{r step10, eval = params$run_why}
+#@include scripts/10_als_at_footprints.R
+```
+
+```{r step10-check}
+check_step(10)
+```
+
+## Step 11. Comparison and figures
+
+```{r step11}
+#@include scripts/11_footprint_figures.R
+check_step(11)
+```
+
+```{r step11-figures, echo = FALSE, out.width = "100%"}
+fw <- file.path("docs/assets/img/why", c("12_same_ground_three_instruments.png", "13_footprint_agreement.png",
+                                          "17_plot_level_comparison.png", "16_filters_checked_against_als.png"))
+knitr::include_graphics(fw[file.exists(fw)])
+```
+
+Every number quoted in page 6 of the tutorial:
+
+```{r step11-numbers}
+cat(readLines("outputs/why/numbers_why.txt"), sep = "\n")
+```
+
+# Summary of the checks
+
+```{r checks-summary}
+.res[, c("step", "status", "check", "detail")]
+```
+
+```{r session}
+sessionInfo()
+```

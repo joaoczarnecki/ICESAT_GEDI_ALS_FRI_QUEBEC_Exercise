@@ -1,0 +1,8 @@
+# Python >= 3.9 (tested with 3.11 on Windows). pip install -r requirements.txt
+sliderule==5.8.1
+geopandas>=1.0
+pyarrow>=15
+pandas>=2.0
+numpy>=1.26
+shapely>=2.0
+pyproj>=3.6
