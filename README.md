@@ -1,5 +1,7 @@
 # ICESat-2 and GEDI against airborne lidar at Québec's permanent forest plots
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24139153.svg)](https://doi.org/10.5281/zenodo.24139153)
+
 A reproducible exercise. How close are ICESat-2 ATL08 and GEDI L2A canopy heights to airborne lidar (ALS) at
 about 10,000 permanent sample plots (PEP) of Québec, and how much uncertainty does the delay between the ALS
 flight and the satellite add?
@@ -43,6 +45,15 @@ Or run everything step by step in R Markdown, with a check of the files after ea
 | `data/why/` | Outputs of steps 9–10 (samples in the region's ALS tiles and their ALS counterparts), so step 11 runs without the LAZ |
 | `tools/build_exercise_rmd.py` | Rebuilds `exercise.Rmd` from `exercise_template.Rmd` and the scripts |
 | `docs/` | The GitHub Pages site |
+
+## How to cite
+
+Czarnecki de Liz, J. P. (2026). *ICESat-2 and GEDI against airborne lidar at Québec's permanent forest plots: a
+reproducible exercise* (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.24139153
+
+This DOI always resolves to the latest version; each version also has its own DOI on the
+[Zenodo record](https://doi.org/10.5281/zenodo.24139153). GitHub's *Cite this repository* button gives the same
+citation in APA and BibTeX.
 
 ## Credits and licences
 

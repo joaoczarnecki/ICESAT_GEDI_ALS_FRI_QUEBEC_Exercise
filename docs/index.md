@@ -11,6 +11,8 @@ How close are spaceborne lidar canopy heights to airborne lidar (ALS) on the gro
 does the delay between the two acquisitions cost? A reproducible exercise on about 10,000 permanent sample plots.
 {: .fs-5 .fw-300 }
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24139153.svg)](https://doi.org/10.5281/zenodo.24139153)
+
 [Start with the data](01_setup_and_data.html){: .btn .btn-primary .mr-2 } [Code on GitHub](https://github.com/joaoczarnecki/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise){: .btn }
 
 ---
@@ -75,6 +77,15 @@ flowchart LR
   T --> Y["09-11 same-ground check<br/>(one region)"]
   Y -.provided.-> YW[("data/why/")]
 ```
+
+## How to cite
+
+Czarnecki de Liz, J. P. (2026). *ICESat-2 and GEDI against airborne lidar at Québec's permanent forest plots: a
+reproducible exercise* (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.24139153
+
+This DOI always resolves to the latest version; each version also has its own DOI on the
+[Zenodo record](https://doi.org/10.5281/zenodo.24139153). GitHub's *Cite this repository* button gives the same
+citation in APA and BibTeX.
 
 ## Credits
 

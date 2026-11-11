@@ -10,6 +10,14 @@ authors:
     affiliation: Université Laval
     orcid: "https://orcid.org/0000-0003-1860-346X"
 license: MIT
+doi: 10.5281/zenodo.24139153
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.24139153
+    description: Concept DOI (all versions, resolves to the latest)
+  - type: doi
+    value: 10.5281/zenodo.24139154
+    description: Version 1.0.0
 repository-code: "https://github.com/joaoczarnecki/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise"
 url: "https://joaoczarnecki.github.io/ICESAT_GEDI_ALS_FRI_QUEBEC_Exercise/"
 abstract: >-
